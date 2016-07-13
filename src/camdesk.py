@@ -124,17 +124,17 @@ class CamDesk(Gtk.Window):
 
         if self.startcam == "Start":
 #             Set up the gstreamer pipeline
-#             self.player = Gst.parse_launch("videotestsrc ! video/x-raw,width=640,height=480,framerate=30/1 ! aspectratiocrop aspect-ratio=16/9 !autovideosink")
-#             self.player = Gst.parse_launch("v4l2src ! autovideosink")
+            self.player = Gst.parse_launch("v4l2src ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! video/x-raw-yuv,width=320,height=240,framerate=30/1 ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! video/x-raw-yuv,width=320,height=240,framerate=30/1 ! textoverlay font-desc=\"Sans 20\" text=\"Microsoft LifeCam NX-3000\" valign=top halign=left shaded-background=true ! timeoverlay halign=right valign=bottom font-desc=\"Sans 20\" ! clockoverlay halign=left valign=bottom text=\"\" time-format=\"%d.%m.%Y  %H:%M:%S \" font-desc=\"Sans 20\" ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! textoverlay valignment=bottom xpad=450 ypad=25 color=4278255360 font-desc=\"Sans 20\" text=\"Microsoft LifeCam NX-3000\" shaded-background=true ! timeoverlay halignment=right color=4278255360 font-desc=\"Sans 20\" ! clockoverlay color=4278255360 text=\"\" time-format=\"%d.%m.%Y  %H:%M:%S \" font-desc=\"Sans 20\" ! autovideosink")
-            self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+#             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
             self.startcam ="Stop"
         else:
-            self.player = Gst.parse_launch("videotestsrc ! video/x-raw,width=640,height=480,framerate=30/1 ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+#             self.player = Gst.parse_launch("videotestsrc ! video/x-raw,width=640,height=480,framerate=30/1 ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+            self.player = Gst.parse_launch("videotestsrc ! autovideosink")
             self.startcam = "Start"
 
         bus = self.player.get_bus()
@@ -161,12 +161,12 @@ class CamDesk(Gtk.Window):
 #         self.set_size_request(400, 225)
 #         self.set_size_request(533, 300)
 #         self.set_size_request(560, 315)
-        self.set_size_request(640, 360)
+#         self.set_size_request(640, 360)
 #         self.set_size_request(853, 480)
 #         self.set_size_request(1280, 720)
 
 #         aspect-ratio=4/3
-#         self.set_size_request(320, 240)
+        self.set_size_request(320, 240)
 #         self.set_size_request(640, 480)
 #         self.set_size_request(533, 400)
 #         self.set_size_request(640, 480)
