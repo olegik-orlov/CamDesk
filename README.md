@@ -4,3 +4,9 @@
 ```
 $ python camdesk.py
 ```
+
+or
+
+```
+$ ./camdesk.py
+```
