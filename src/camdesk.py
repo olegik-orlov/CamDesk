@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Created on 2016.07.03
 
@@ -43,6 +44,11 @@ class CamDesk(Gtk.Window):
         if event.keyval == Gdk.KEY_F3 :
             self.set_keep_above(not self.pin)
             self.pin = not self.pin
+
+
+    def flipme(self, widget, event) :
+        if event.keyval == Gdk.KEY_F4 :
+            self.flip()
 
 
     def properties(self, widget, event) :
@@ -116,6 +122,28 @@ class CamDesk(Gtk.Window):
         self.win.hide()
         
 
+    def flip(self) :
+
+        self.show_all()
+        self.xid = self.movie_window.get_property('window').get_xid()
+        self.player.set_state(Gst.State.NULL)
+
+        if self.startcam == "Stop":
+            if self.flipcam == True:
+                self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+                self.flipcam = False
+            else:
+                self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! videoflip method=horizontal-flip ! autovideosink")
+                self.flipcam = True
+
+        bus = self.player.get_bus()
+        bus.add_signal_watch()
+        bus.enable_sync_message_emission()
+        bus.connect("message", self.on_message)
+        bus.connect("sync-message::element", self.on_sync_message)
+        self.player.set_state(Gst.State.PLAYING)
+        
+        
     def run(self) :
 
         self.show_all()
@@ -123,18 +151,23 @@ class CamDesk(Gtk.Window):
         self.player.set_state(Gst.State.NULL)
 
         if self.startcam == "Start":
+            if self.flipcam == True:
+                self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! videoflip method=horizontal-flip ! autovideosink")
+            else:
+                self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+
 #             Set up the gstreamer pipeline
-            self.player = Gst.parse_launch("v4l2src ! autovideosink")
+#             self.player = Gst.parse_launch("v4l2src ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! video/x-raw-yuv,width=320,height=240,framerate=30/1 ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! video/x-raw-yuv,width=320,height=240,framerate=30/1 ! textoverlay font-desc=\"Sans 20\" text=\"Microsoft LifeCam NX-3000\" valign=top halign=left shaded-background=true ! timeoverlay halign=right valign=bottom font-desc=\"Sans 20\" ! clockoverlay halign=left valign=bottom text=\"\" time-format=\"%d.%m.%Y  %H:%M:%S \" font-desc=\"Sans 20\" ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! autovideosink")
 #             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! textoverlay valignment=bottom xpad=450 ypad=25 color=4278255360 font-desc=\"Sans 20\" text=\"Microsoft LifeCam NX-3000\" shaded-background=true ! timeoverlay halignment=right color=4278255360 font-desc=\"Sans 20\" ! clockoverlay color=4278255360 text=\"\" time-format=\"%d.%m.%Y  %H:%M:%S \" font-desc=\"Sans 20\" ! autovideosink")
-#             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+#             self.player = Gst.parse_launch("v4l2src device=\"/dev/video1\" ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! aspectratiocrop aspect-ratio=16/9 ! videoflip method=horizontal-flip ! autovideosink")
             self.startcam ="Stop"
         else:
-#             self.player = Gst.parse_launch("videotestsrc ! video/x-raw,width=640,height=480,framerate=30/1 ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
-            self.player = Gst.parse_launch("videotestsrc ! autovideosink")
+            self.player = Gst.parse_launch("videotestsrc ! video/x-raw,width=640,height=480,framerate=30/1 ! aspectratiocrop aspect-ratio=16/9 ! autovideosink")
+#             self.player = Gst.parse_launch("videotestsrc ! autovideosink")
             self.startcam = "Start"
 
         bus = self.player.get_bus()
@@ -161,12 +194,12 @@ class CamDesk(Gtk.Window):
 #         self.set_size_request(400, 225)
 #         self.set_size_request(533, 300)
 #         self.set_size_request(560, 315)
-#         self.set_size_request(640, 360)
+        self.set_size_request(640, 360)
 #         self.set_size_request(853, 480)
 #         self.set_size_request(1280, 720)
 
 #         aspect-ratio=4/3
-        self.set_size_request(320, 240)
+#         self.set_size_request(320, 240)
 #         self.set_size_request(640, 480)
 #         self.set_size_request(533, 400)
 #         self.set_size_request(640, 480)
@@ -178,6 +211,7 @@ class CamDesk(Gtk.Window):
         self.connect("destroy", self.quit)
         self.connect("key-press-event", self.closeme)
         self.connect("key-press-event", self.runme)
+        self.connect("key-press-event", self.flipme)
         self.connect("key-press-event", self.showhidemouse)
         self.connect("key-press-event", self.pinme)
         self.connect("key-press-event", self.properties)
@@ -197,6 +231,7 @@ class CamDesk(Gtk.Window):
 
 #         Presets on load
         self.startcam = "Stop"
+        self.flipcam = True
         self.mouse = "Show"
         self.scale = 100
         self.pin = True
